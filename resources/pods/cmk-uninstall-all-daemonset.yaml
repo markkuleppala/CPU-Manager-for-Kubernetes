@@ -33,8 +33,8 @@ spec:
     spec:
       serviceAccountName: cmk-serviceaccount
 # Needed for k8s >= 1.7
-#      tolerations:
-#      - operator: "Exists"
+      tolerations:
+      - operator: "Exists"
       nodeSelector:
         "cmk.intel.com/cmk-node": "true"
       containers:
