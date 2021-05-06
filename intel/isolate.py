@@ -31,7 +31,10 @@ ENV_NUM_CORES = "CMK_NUM_CORES"
 
 
 def isolate(pool_name, no_affinity, command, args, namespace, socket_id=None):
-    pod_name = os.environ["HOSTNAME"]
+    pod_name = os.getenv["PODNAME"]
+    if pod_name is None:
+        pod_name = os.environ["HOSTNAME"]
+        
     if not isinstance(pod_name, str):
         logging.error("Pod name is not a string, exiting...")
         sys.exit(1)
@@ -144,11 +147,13 @@ command because the --no-affinity flag was supplied""")
         child.wait()
 
     finally:
-        pod_name = os.environ["HOSTNAME"]
+        pod_name = os.getenv["PODNAME"]
+        if pod_name is None:
+            pod_name = os.environ["HOSTNAME"]
         node_name = k8s.get_node_from_pod(None, pod_name)
         configmap_name = "cmk-config-{}".format(node_name)
 
-        c = config.Config(configmap_name, pod_name)
+        c = config.Config(configmap_name, pod_name, namespace)
         c.lock()
         pool = c.get_pool(pool_name)
         pid = str(proc.getpid())
