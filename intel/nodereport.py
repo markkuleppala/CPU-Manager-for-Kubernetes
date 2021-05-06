@@ -96,10 +96,13 @@ def check_describe(report, namespace):
         pod_name = os.environ["HOSTNAME"]
         node_name = k8s.get_node_from_pod(None, pod_name)
         configmap_name = "cmk-config-{}".format(node_name)
-        c = config.get_config(configmap_name, namespace)
+        c = config.Config(configmap_name, pod_name, namespace)
+        c.lock()
         report.add_description(c.as_dict())
     except Exception:
         pass
+    finally:
+        c.unlock()
 
 
 def check_cmk_config(report, namespace):
@@ -110,12 +113,21 @@ def check_cmk_config(report, namespace):
         pod_name = os.environ["HOSTNAME"]
         node_name = k8s.get_node_from_pod(None, pod_name)
         configmap_name = "cmk-config-{}".format(node_name)
-        c = config.get_config(configmap_name, namespace)
+        c = config.Config(configmap_name, pod_name, namespace)
+        c.lock()
     except Exception:
         check_conf.add_error("Unable to read CMK configmap")
         return  # Nothing more we can check for now
+    finally:
+        c.unlock()
 
     # Ensure pool cpu lists are disjoint
+    pod_name = os.environ["HOSTNAME"]
+    node_name = k8s.get_node_from_pod(None, pod_name)
+    configmap_name = "cmk-config-{}".format(node_name)
+    c = config.Config(configmap_name, pod_name, namespace)
+    c.lock()
+
     cpu_lists = []
     for p in c.get_pools():
         pool = c.get_pool(p)
@@ -127,6 +139,8 @@ def check_cmk_config(report, namespace):
                 "cpus": proc.unfold_cpu_list(",".join(clists))
             }
         ]
+
+    c.unlock()
 
     # Subset of cartesian product without self-maplets:
     # If a -> b is in the result then b -> a is not.
