@@ -30,8 +30,8 @@ spec:
     spec:
       serviceAccountName: cmk-serviceaccount
 # Needed for k8s >= 1.7
-#      tolerations:
-#      - operator: "Exists"
+      tolerations:
+      - operator: "Exists"
       containers:
       - args:
         - "/cmk/cmk.py isolate --pool=infra /cmk/cmk.py -- node-report --interval=$CMK_NODE_REPORT_SLEEP_TIME --publish"
@@ -57,13 +57,6 @@ spec:
           readOnly: true
         - mountPath: "/etc/cmk"
           name: cmk-conf-dir
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          capabilities:
-            drop:
-              - all
       volumes:
       - hostPath:
           path: "/proc"
