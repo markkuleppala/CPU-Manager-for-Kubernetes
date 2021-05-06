@@ -33,8 +33,8 @@ spec:
     spec:
       serviceAccountName: cmk-serviceaccount
 # Needed for k8s >= 1.7
-#      tolerations:
-#      - operator: "Exists"
+      tolerations:
+      - operator: "Exists"
       containers:
       - args:
         - "/cmk/cmk.py isolate --pool=infra /cmk/cmk.py -- reconcile --interval=$CMK_RECONCILE_SLEEP_TIME --publish"
