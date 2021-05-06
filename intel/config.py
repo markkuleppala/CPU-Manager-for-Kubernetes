@@ -42,12 +42,12 @@ class Config:
         while True:
             try:
                 c = k8s.get_config_map(None, self.cm_name, self.cm_namespace)
-                owner = c.metadata.annotations.Owner
+                owner = c.metadata.annotations["Owner"]
                 if owner != "":
                     time.sleep(1)
                     continue
                 else:
-                    c.metadata.annotations.Owner = self.owner
+                    c.metadata.annotations["Owner"] = self.owner
                     try:
                         k8s.patch_config_map(None, self.cm_name,
                                              c, self.cm_namespace)
@@ -67,7 +67,7 @@ class Config:
                 sys.exit(1)
 
     def unlock(self):
-        self.c.metadata.annotations.Owner = ""
+        self.c.metadata.annotations["Owner"] = ""
         config = build_configmap(self.c_data)
         configmap = k8sclient.V1ConfigMap()
         data = {
