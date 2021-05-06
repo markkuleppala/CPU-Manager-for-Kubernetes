@@ -35,7 +35,7 @@ spec:
     - "/bin/bash"
     - "-c"
     args:
-    - "/opt/bin/cmk isolate --pool=exclusive echo -- Hello World Exclusive!!!"
+    - "/cmk/cmk.py isolate --pool=exclusive echo -- Hello World Exclusive!!!"
     resources:
       requests:
         cmk.intel.com/exclusive-cores: '1'
@@ -47,14 +47,14 @@ spec:
     - "/bin/bash"
     - "-c"
     args:
-    - "/opt/bin/cmk isolate --pool=shared echo -- Hello World Shared!!!"
+    - "/cmk/cmk.py isolate --pool=shared echo -- Hello World Shared!!!"
   - name: cmk-isolate-infra
     image: cmk:v1.5.2
     command:
     - "/bin/bash"
     - "-c"
     args:
-    - "/opt/bin/cmk isolate --pool=infra echo -- Hello World Infra!!!"
+    - "/cmk/cmk.py isolate --pool=infra echo -- Hello World Infra!!!"
   tolerations:
   - key: "cmk"
     operator: "Exists"
