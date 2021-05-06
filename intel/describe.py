@@ -21,7 +21,10 @@ def describe():
     pod_name = os.environ["HOSTNAME"]
     node_name = k8s.get_node_from_pod(None, pod_name)
     configmap_name = "cmk-config-{}".format(node_name)
-    c = config.Config(configmap_name, pod_name)
+    with open('/var/run/secrets/kubernetes.io/serviceaccount/namespace', 'r') as f:
+        namespace = f.readline()
+
+    c = config.Config(configmap_name, pod_name, namespace)
     c.lock()
     print(json.dumps(c.c_data.as_dict(), sort_keys=True, indent=2))
     c.unlock()
