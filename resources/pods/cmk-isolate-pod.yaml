@@ -35,7 +35,7 @@ spec:
     - "/bin/bash"
     - "-c"
     args:
-    - "/cmk/cmk.py isolate --pool=exclusive echo -- Hello World Exclusive!!!"
+    - "/opt/bin/cmk isolate --conf-dir=/etc/cmk --pool=exclusive echo -- Hello World Exclusive!!!"
     resources:
       requests:
         cmk.intel.com/exclusive-cores: '1'
